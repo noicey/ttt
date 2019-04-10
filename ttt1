@@ -1,0 +1,75 @@
+#include "SevSeg.h"
+SevSeg sevseg;
+int i,Min=0,Hour=0,numDigits,t=0;
+char a;
+
+void setup() {
+  
+  byte number = 4;
+  byte digitPins[]={2,3,4,5};
+  byte segmentPins[]={8,9,10,11,12,13,14,15};
+  pinMode(6,INPUT);
+  pinMode(7,INPUT);
+  sevseg.begin(COMMON_CATHODE,number,digitPins,segmentPins);
+
+  Serial.begin(9600);
+}
+
+void loop() {
+  int x,j;
+  char val;
+  sevseg.setNumber(Hour*100+Min,4);
+   
+
+  
+  if(Serial.available())
+  {
+    
+    val = Serial.read();
+    
+    if(val == 'S')
+      a=val;
+    else if(val == 'R')
+    {
+      a=val;
+      t=0;
+    }
+  }
+  
+
+  
+  if(a=='S')
+  {
+      Min = Min + 1;
+
+      if(Min==99)
+      {
+       Min=0;
+       Hour=0;
+      }
+
+  }
+  
+  
+   else if(a == 'R')
+    {
+      if(t==0)
+      {
+        Min=99;
+        t=1;
+      }
+   
+      Min--;
+
+      if(Min==0)
+      {
+        a=NULL;
+      }
+      
+    }
+   for(int y = millis();millis()-y<100;)
+       sevseg.refreshDisplay(); 
+  }
+  
+  
+
